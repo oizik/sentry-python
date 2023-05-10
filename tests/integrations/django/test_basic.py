@@ -1156,23 +1156,14 @@ def test_cache_spans_non_bool_cache_object(
     events = capture_events()
 
     client.get(reverse("view_with_cache_of_non_bool_object"))
-    client.get(reverse("view_with_cache_of_non_bool_object"))
 
-    (first_event, second_event) = events
-    assert len(first_event["spans"]) == 1
-    assert first_event["spans"][0]["op"] == "cache.get_item"
-    assert first_event["spans"][0]["description"].startswith(
-        "get template.cache.some_identifier."
-    )
-    assert first_event["spans"][0]["data"] == {"cache.hit": False}
+    single_event = events[0]
 
-    assert len(second_event["spans"]) == 1
-    assert second_event["spans"][0]["op"] == "cache.get_item"
-    assert second_event["spans"][0]["description"].startswith(
-        "get template.cache.some_identifier."
-    )
-    assert second_event["spans"][0]["data"]["cache.hit"]
-    assert "cache.item_size" in second_event["spans"][0]["data"]
+    assert len(single_event["spans"]) == 1
+    assert single_event["spans"][0]["op"] == "cache.get_item"
+    assert single_event["spans"][0]["description"].startswith("get no_bool_cache_key")
+    assert single_event["spans"][0]["data"]["cache.hit"]
+    assert "cache.item_size" in single_event["spans"][0]["data"]
 
 
 @pytest.mark.parametrize(

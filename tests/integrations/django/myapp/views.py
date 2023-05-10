@@ -75,10 +75,13 @@ def view_with_cached_template_fragment(request):
 
 
 class NoBool:
-    def __nonzero__(self) -> None:
+    def __nonzero__(self):
         raise ValueError("No truthy value here")
 
     __bool__ = __nonzero__
+
+    def __str__(self):
+        return "NoBool"
 
 
 def view_with_cache_of_non_bool_object(request):
@@ -86,8 +89,8 @@ def view_with_cache_of_non_bool_object(request):
     no_bool = NoBool()
 
     cache = caches["default"]
-    cache.set("foo", no_bool)
-    cache.get("foo")
+    cache.set("no_bool_cache_key", no_bool)
+    cache.get("no_bool_cache_key")
 
     return HttpResponse("ok")
 
